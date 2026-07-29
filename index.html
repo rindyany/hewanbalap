@@ -1,109 +1,188 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hewan Balap - Sudah Diperbaiki</title>
+    <title>Tangkap Makanan</title>
     <style>
-        * { margin:0; padding:0; font-family:Arial; box-sizing:border-box; }
-        body { background:#87CEEB; }
-        #menu { text-align:center; padding-top:80px; }
-        #menu h1 { margin-bottom:30px; color:white; text-shadow:2px 2px 4px #333; }
-        .btn { padding:12px 30px; margin:8px; font-size:18px; border:none; border-radius:8px; cursor:pointer; color:white; }
-        .mudah { background:green; }
-        .sedang { background:orange; }
-        .sulit { background:red; }
-        #ui { display:none; background:rgba(0,0,0,0.7); color:white; padding:10px; text-align:center; font-size:18px; }
-        #arena { display:none; width:900px; height:400px; background:linear-gradient(#90EE90,#228B22); margin:20px auto; border:3px solid white; position:relative; overflow:hidden; }
-        .karakter { position:absolute; font-size:45px; line-height:1; }
-        #p1 { top:80px; left:20px; }
-        #p2 { top:180px; left:20px; }
-        #musuh { top:280px; left:20px; }
-        #garis { position:absolute; right:60px; top:0; height:100%; width:3px; border-left:3px dashed white; }
-        #notif { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.9); color:yellow; padding:20px 30px; font-size:26px; display:none; border-radius:10px; text-align:center; }
+        * {margin:0;padding:0;font-family:Arial;}
+        body {background:#87CEEB;text-align:center;}
+
+        /* MENU PILIH */
+        #menu {padding-top:100px;}
+        h1 {color:white;text-shadow:2px 2px 4px #333;margin-bottom:30px;}
+        .btn {padding:12px 35px;margin:10px;font-size:18px;border:none;border-radius:8px;color:white;cursor:pointer;}
+        .mudah {background:green;}
+        .sedang {background:orange;}
+        .sulit {background:red;}
+
+        /* INFO ATAS */
+        #info {display:none;background:#222;color:white;padding:8px;font-size:18px;}
+        #info span {color:yellow;font-weight:bold;}
+
+        /* AREA MAIN */
+        #layar {display:none;width:900px;height:500px;background:linear-gradient(#87CEEB,#90EE90);margin:20px auto;position:relative;overflow:hidden;border:3px solid white;}
+        #keranjang {position:absolute;bottom:10px;left:400px;font-size:60px;}
+        .jatuh {position:absolute;font-size:40px;}
+        #pesan {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:yellow;padding:20px;font-size:24px;display:none;}
     </style>
 </head>
 <body>
 
+<!-- MENU AWAL -->
 <div id="menu">
-    <h1>🏁 PILIH TINGKATAN</h1>
-    <button class="btn mudah" onclick="mulai('mudah')">🟢 MUDAH</button>
-    <button class="btn sedang" onclick="mulai('sedang')">🟠 SEDANG</button>
-    <button class="btn sulit" onclick="mulai('sulit')">🔴 SULIT</button>
+    <h1>🧺 TANGKAP MAKANAN</h1>
+    <button class="btn mudah" onclick="mulai(3,1200)">🟢 MUDAH</button>
+    <button class="btn sedang" onclick="mulai(5,900)">🟠 SEDANG</button>
+    <button class="btn sulit" onclick="mulai(7,600)">🔴 SULIT</button>
+    <p style="margin-top:15px;color:white;">Gunakan ⬅️➡️ untuk gerakkan keranjang</p>
 </div>
 
-<div id="ui">
-    Waktu: <span id="waktu">30</span> detik | Level: <span id="level">1</span>
+<div id="info">
+    Nyawa: <span id="nyawa">❤️❤️❤️</span> |
+    Skor: <span id="skor">0</span> |
+    Level: <span id="level">1</span> / 10
 </div>
 
-<div id="arena">
-    <div id="p1" class="karakter">🐇</div>
-    <div id="p2" class="karakter">🐢</div>
-    <div id="musuh" class="karakter">🐺</div>
-    <div id="garis"></div>
-    <div id="notif"></div>
+<div id="layar">
+    <div id="keranjang">🧺</div>
+    <div id="pesan"></div>
 </div>
 
 <script>
 const menu = document.getElementById('menu');
-const ui = document.getElementById('ui');
-const arena = document.getElementById('arena');
-const p1 = document.getElementById('p1');
-const p2 = document.getElementById('p2');
-const musuh = document.getElementById('musuh');
-const waktuEl = document.getElementById('waktu');
-const levelEl = document.getElementById('level');
-const notif = document.getElementById('notif');
+const info = document.getElementById('info');
+const layar = document.getElementById('layar');
+const keranjang = document.getElementById('keranjang');
+const pesan = document.getElementById('pesan');
+const elNyawa = document.getElementById('nyawa');
+const elSkor = document.getElementById('skor');
+const elLevel = document.getElementById('level');
 
-let waktu = 30, level = 1, jalanTerus = true;
-let pos1 = 20, pos2 = 20, posMusuh = 20;
+let jalan, kecepatan, jedaJatuh, skor, level, nyawa, arah;
 let tombol = {};
-let kecepatanAwal, kecepatanMusuhAwal;
 
-document.addEventListener('keydown', e => tombol[e.key] = true);
-document.addEventListener('keyup', e => tombol[e.key] = false);
+// DAFTAR BARANG
+const makanan = ['🍎','🍌','🍇','🍊','🍞','🧀','🍗','🍕'];
+const sampah = ['👟','🧦','📱','💣','🪨'];
 
-function bunyi(link) { try { new Audio(link).play() } catch(e) {} }
-function info(pesan) { notif.innerText = pesan; notif.style.display = 'block'; setTimeout(() => notif.style.display = 'none', 2500); }
+document.addEventListener('keydown',e=>tombol[e.key]=true);
+document.addEventListener('keyup',e=>tombol[e.key]=false);
 
-function mulai(pilih) {
-    menu.style.display = 'none';
-    ui.style.display = 'block';
-    arena.style.display = 'block';
-    if(pilih == 'mudah') { kecepatanAwal=5; kecepatanMusuhAwal=1.8; waktu=40; }
-    if(pilih == 'sedang') { kecepatanAwal=4; kecepatanMusuhAwal=2.8; waktu=30; }
-    if(pilih == 'sulit') { kecepatanAwal=3.5; kecepatanMusuhAwal=3.8; waktu=25; }
-    waktuEl.innerText = waktu;
-    setInterval(hitungWaktu,1000);
-    mainGame();
+function mulai(k,j){
+    menu.style.display='none';
+    info.style.display='block';
+    layar.style.display='block';
+
+    kecepatan = k;
+    jedaJatuh = j;
+    skor = 0;
+    level = 1;
+    nyawa = 3;
+    arah = 420;
+    jalan = true;
+
+    updateInfo();
+    main();
+    setInterval(buatBarang, jedaJatuh);
 }
 
-function hitungWaktu() {
-    if(!jalanTerus) return;
-    waktu--; waktuEl.innerText = waktu;
-    if(waktu<=0) { jalanTerus=false; info("⏰ Waktu Habis!"); setTimeout(()=>location.reload(),3000); }
+function updateInfo(){
+    elSkor.innerText = skor;
+    elLevel.innerText = level;
+    elNyawa.innerText = '❤️'.repeat(nyawa);
 }
 
-function cekMenang() {
-    if(pos1 >= 840) { jalanTerus=false; info("🎉 PEMAIN 1 MENANG!"); bunyi('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3'); setTimeout(naikLevel,2500); }
-    if(pos2 >= 840) { jalanTerus=false; info("🎉 PEMAIN 2 MENANG!"); bunyi('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3'); setTimeout(naikLevel,2500); }
-    if(posMusuh >= 840) { jalanTerus=false; info("💀 Serigala Menang!"); bunyi('https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3'); setTimeout(()=>location.reload(),3000); }
+function tampil(t){
+    pesan.innerText = t;
+    pesan.style.display = 'block';
+    setTimeout(()=>location.reload(),3000);
 }
 
-function naikLevel() {
-    level++; levelEl.innerText=level; waktu+=10; pos1=pos2=posMusuh=20; jalanTerus=true;
+function naikLevel(){
+    level++;
+    if(level>10){
+        jalan=false;
+        tampil('🎉 SELAMAT! KAMU MENYELESAIKAN SEMUA LEVEL!');
+    }else{
+        kecepatan += 0.6;
+        jedaJatuh = Math.max(300, jedaJatuh - 80);
+        updateInfo();
+    }
 }
 
-function mainGame() {
-    if(!jalanTerus) return;
-    if(tombol['ArrowRight']) pos1 += kecepatanAwal + (level*0.2);
-    if(tombol['l'] || tombol['L']) pos2 += kecepatanAwal - 0.5 + (level*0.2);
-    posMusuh += kecepatanMusuhAwal + (level*0.3);
+function buatBarang(){
+    if(!jalan) return;
+    const b = document.createElement('div');
+    b.className = 'jatuh';
+    b.style.left = (50 + Math.random()*800) + 'px';
+    b.style.top = '-50px';
 
-    p1.style.left = pos1 + 'px';
-    p2.style.left = pos2 + 'px';
-    musuh.style.left = posMusuh + 'px';
+    // 70% makanan, 30% sampah
+    if(Math.random() < 0.7){
+        b.innerText = makanan[Math.floor(Math.random()*makanan.length)];
+        b.dataset.jenis = 'bagus';
+    }else{
+        b.innerText = sampah[Math.floor(Math.random()*sampah.length)];
+        b.dataset.jenis = 'buruk';
+    }
 
-    cekMenang();
-    requestAnimationFrame(mainGame);
+    layar.appendChild(b);
+    gerakBarang(b);
+}
+
+function gerakBarang(el){
+    const gerak = setInterval(()=>{
+        if(!jalan) {clearInterval(gerak); return;}
+        let y = parseFloat(el.style.top);
+        y += kecepatan;
+        el.style.top = y + 'px';
+
+        // POSISI KERANJANG
+        let kiri = arah;
+        let kanan = arah + 60;
+
+        // TERANGKAP
+        if(y >= 440 && y <= 490){
+            let x = parseFloat(el.style.left);
+            if(x > kiri && x < kanan){
+                el.remove();
+                clearInterval(gerak);
+                if(el.dataset.jenis == 'bagus'){
+                    skor += 10;
+                    if(skor % 50 == 0) naikLevel();
+                }else{
+                    nyawa--;
+                    if(nyawa <= 0){
+                        jalan = false;
+                        tampil(`💀 GAME OVER! Skor akhir: ${skor}`);
+                    }
+                }
+                updateInfo();
+            }
+        }
+
+        // JATUH KE BAWAH TANPA TERANGKAP
+        if(y > 520){
+            el.remove();
+            clearInterval(gerak);
+            if(el.dataset.jenis == 'bagus'){
+                nyawa--;
+                if(nyawa <= 0){
+                    jalan = false;
+                    tampil(`💀 GAME OVER! Skor akhir: ${skor}`);
+                }
+                updateInfo();
+            }
+        }
+    }, 30);
+}
+
+// GERAK KERANJANG
+function main(){
+    if(!jalan) return;
+    if(tombol['ArrowLeft'] && arah > 10) arah -= 8;
+    if(tombol['ArrowRight'] && arah < 830) arah += 8;
+    keranjang.style.left = arah + 'px';
+    requestAnimationFrame(main);
 }
 </script>
 </body>
