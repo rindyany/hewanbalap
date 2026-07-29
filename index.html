@@ -10,7 +10,6 @@
         .logo-header {
             display:flex;justify-content:space-between;align-items:center;
             padding:10px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:99;
-            transition: opacity 0.3s ease;
         }
         .logo-kiri, .logo-kanan {display:flex;gap:18px;}
         .logo-header img {height:55px;object-fit:contain;}
@@ -70,7 +69,7 @@
             box-shadow:0 0 15px rgba(255,105,180,0.4);
         }
 
-        /* LOGO BACKGROUND SAMAR DI DALAM LAYAR SAJA */
+        /* LOGO BACKGROUND SAMAR */
         .logo-bg {
             position:absolute;top:0;left:0;width:100%;height:100%;
             display:flex;justify-content:center;align-items:center;gap:25px;flex-wrap:wrap;
@@ -78,7 +77,8 @@
         }
         .logo-bg img {height:100px;object-fit:contain;filter:grayscale(15%);}
 
-        #keranjang {position:absolute;bottom:10px;left:400px;font-size:90px;z-index:5;}
+        /* ✅ KERANJANG DIPERBESAR */
+        #keranjang {position:absolute;bottom:5px;left:400px;font-size:120px;z-index:5;}
         .jatuh {position:absolute;font-size:40px;z-index:4;}
         #pesan {
             position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -89,7 +89,7 @@
 </head>
 <body>
 
-<!-- LOGO ATAS HANYA MUNCUL DI MENU -->
+<!-- LOGO ATAS HANYA DI MENU -->
 <div class="logo-header" id="logoAtas">
     <div class="logo-kiri">
         <img src="onesanden.jpeg" alt="One Sanden">
@@ -113,7 +113,6 @@ for(let i=0;i<20;i++){
 }
 </script>
 
-<!-- HALAMAN MENU -->
 <div id="menu">
     <h1>🧺 TANGKAP MAKANAN</h1>
     <div class="btn-group">
@@ -182,7 +181,7 @@ function mulai(k,j){
     menu.style.display='none'; 
     info.style.display='block'; 
     layar.style.display='block';
-    logoAtas.style.display='none'; // ✅ PASTI HILANG TOTAL LOGO ATAS PAS MAIN
+    logoAtas.style.display='none';
     kecepatan = k; jedaJatuh = j; skor = 0; level = 1; 
     nyawa = 10; 
     arah = 400; jalan = true;
@@ -213,11 +212,16 @@ function gerakBarang(el){
     const gerak=setInterval(()=>{
         if(!jalan){clearInterval(gerak);return;}
         let y=parseFloat(el.style.top); y+=kecepatan; el.style.top=y+'px';
-        let kiri=arah - 40; let kanan=arah + 130;
 
-        if(y>=440&&y<=490){
+        // ✅ JANGKAUAN TANGKAP DIPERLUAS BANGET, GAK PERLU PAS TEPAT
+        let kiriKeranjang = arah - 60;
+        let kananKeranjang = arah + 160;
+        let areaBawah = 430;
+        let areaAtas = 500;
+
+        if(y >= areaBawah && y <= areaAtas){
             let x=parseFloat(el.style.left);
-            if(x>kiri&&x<kanan){
+            if(x > kiriKeranjang && x < kananKeranjang){
                 el.remove(); clearInterval(gerak);
                 if(el.dataset.jenis=='bagus'){skor+=10;suaraBenar.play();if(skor%50==0)naikLevel();}
                 else{nyawa--;suaraSalah.play();updateNyawa();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
@@ -235,7 +239,7 @@ function gerakBarang(el){
 function main(){
     if(!jalan) return;
     if(tombol['ArrowLeft']&&arah>10)arah-=8;
-    if(tombol['ArrowRight']&&arah<800)arah+=8;
+    if(tombol['ArrowRight']&&arah<780)arah+=8;
     keranjang.style.left=arah+'px';
     requestAnimationFrame(main);
 }
