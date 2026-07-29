@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hewan Balap Lengkap</title>
+    <title>Hewan Balap - Sudah Diperbaiki</title>
     <style>
         * { margin:0; padding:0; font-family:Arial; box-sizing:border-box; }
         body { background:#87CEEB; }
@@ -68,9 +68,9 @@ function mulai(pilih) {
     menu.style.display = 'none';
     ui.style.display = 'block';
     arena.style.display = 'block';
-    if(pilih == 'mudah') { kecepatanAwal=5; kecepatanMusuhAwal=1.5; waktu=40; }
-    if(pilih == 'sedang') { kecepatanAwal=4; kecepatanMusuhAwal=2.5; waktu=30; }
-    if(pilih == 'sulit') { kecepatanAwal=3.5; kecepatanMusuhAwal=3.5; waktu=25; }
+    if(pilih == 'mudah') { kecepatanAwal=5; kecepatanMusuhAwal=1.8; waktu=40; }
+    if(pilih == 'sedang') { kecepatanAwal=4; kecepatanMusuhAwal=2.8; waktu=30; }
+    if(pilih == 'sulit') { kecepatanAwal=3.5; kecepatanMusuhAwal=3.8; waktu=25; }
     waktuEl.innerText = waktu;
     setInterval(hitungWaktu,1000);
     mainGame();
@@ -97,7 +97,11 @@ function mainGame() {
     if(tombol['ArrowRight']) pos1 += kecepatanAwal + (level*0.2);
     if(tombol['l'] || tombol['L']) pos2 += kecepatanAwal - 0.5 + (level*0.2);
     posMusuh += kecepatanMusuhAwal + (level*0.3);
-    p1.style.left=pos1+'px'; p2.style.left=pos2+'px'; musuh.style.left=posMusuh+'px';
+
+    p1.style.left = pos1 + 'px';
+    p2.style.left = pos2 + 'px';
+    musuh.style.left = posMusuh + 'px';
+
     cekMenang();
     requestAnimationFrame(mainGame);
 }
