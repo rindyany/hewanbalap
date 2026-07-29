@@ -10,6 +10,7 @@
         .logo-header {
             display:flex;justify-content:space-between;align-items:center;
             padding:10px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:99;
+            transition: opacity 0.3s ease;
         }
         .logo-kiri, .logo-kanan {display:flex;gap:18px;}
         .logo-header img {height:55px;object-fit:contain;}
@@ -46,18 +47,18 @@
         }
         .petunjuk {color:#AD1457;font-size:15px;}
 
-        /* BAR INFO & NYAWA BENTUK MELENGKUNG BUKAN KOTAK */
+        /* BAR INFO & NYAWA BENTUK MELENGKUNG */
         #info {
             display:none;background:rgba(199,21,133,0.8);color:white;
-            padding:10px 20px;font-size:18px;border-radius:50px; /* BENTUK MELENGKUNG PENUH */
+            padding:10px 25px;font-size:17px;border-radius:50px;
             margin:10px auto;width:fit-content;position:relative;z-index:20;
             box-shadow:0 2px 8px rgba(0,0,0,0.15);
         }
-        .nyawa-container {display:inline-flex;gap:6px;margin:0 8px;}
+        .nyawa-container {display:inline-flex;gap:4px;margin:0 8px;vertical-align:middle;}
         .hati {
-            font-size:20px;line-height:1;
-            padding:4px 6px;border-radius:50%; /* BENTUK BULAT LEMBUT */
-            background:rgba(255,255,255,0.2);
+            font-size:17px;line-height:1;
+            padding:2px 4px;border-radius:50%;
+            background:rgba(255,255,255,0.15);
         }
 
         /* LAYAR PERMAINAN */
@@ -69,7 +70,7 @@
             box-shadow:0 0 15px rgba(255,105,180,0.4);
         }
 
-        /* LOGO BACKGROUND SAMAR PALING BELAKANG */
+        /* LOGO BACKGROUND SAMAR DI DALAM LAYAR SAJA */
         .logo-bg {
             position:absolute;top:0;left:0;width:100%;height:100%;
             display:flex;justify-content:center;align-items:center;gap:25px;flex-wrap:wrap;
@@ -88,8 +89,8 @@
 </head>
 <body>
 
-<!-- LOGO DI MENU: 2 KIRI - 2 KANAN -->
-<div class="logo-header">
+<!-- LOGO ATAS HANYA MUNCUL DI MENU -->
+<div class="logo-header" id="logoAtas">
     <div class="logo-kiri">
         <img src="onesanden.jpeg" alt="One Sanden">
         <img src="moko.jpeg" alt="MOKO">
@@ -151,7 +152,7 @@ const pesan = document.getElementById('pesan');
 const tampilNyawa = document.getElementById('tampilNyawa');
 const elSkor = document.getElementById('skor');
 const elLevel = document.getElementById('level');
-const logoHeader = document.querySelector('.logo-header');
+const logoAtas = document.getElementById('logoAtas');
 
 let jalan, kecepatan, jedaJatuh, skor, level, nyawa, arah;
 let tombol = {};
@@ -169,7 +170,7 @@ document.addEventListener('keyup', e=>tombol[e.key]=false);
 
 function updateNyawa(){
     tampilNyawa.innerHTML = '';
-    for(let i=0;i<5;i++){
+    for(let i=0; i<10; i++){
         const h = document.createElement('span');
         h.className = 'hati';
         h.innerText = i < nyawa ? '❤️' : '🖤';
@@ -181,8 +182,10 @@ function mulai(k,j){
     menu.style.display='none'; 
     info.style.display='block'; 
     layar.style.display='block';
-    logoHeader.style.display='none'; // HILANG LOGO ATAS PAS MAIN
-    kecepatan = k; jedaJatuh = j; skor = 0; level = 1; nyawa = 5; arah = 400; jalan = true;
+    logoAtas.style.display='none'; // ✅ PASTI HILANG TOTAL LOGO ATAS PAS MAIN
+    kecepatan = k; jedaJatuh = j; skor = 0; level = 1; 
+    nyawa = 10; 
+    arah = 400; jalan = true;
     updateInfo(); updateNyawa(); main(); setInterval(buatBarang, jedaJatuh);
 }
 
