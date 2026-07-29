@@ -3,89 +3,133 @@
 <head>
     <title>Tangkap Makanan</title>
     <style>
-        * {margin:0;padding:0;font-family:Arial;}
-        body {background:linear-gradient(#FFE4E1,#FFC0CB);text-align:center;position:relative;overflow:hidden;}
+        * {margin:0;padding:0;font-family:Arial;box-sizing:border-box;}
+        body {background:linear-gradient(#FFE4E1,#FFC0CB);text-align:center;position:relative;overflow:hidden;min-height:100vh;}
 
-        /* AREA LOGO */
-        .logo-bar {display:flex;justify-content:center;gap:15px;flex-wrap:wrap;padding:10px;}
-        .logo-bar img {height:60px;object-fit:contain;}
+        /* LOGO MENU: 2 KIRI 2 KANAN */
+        .logo-header {
+            display:flex;justify-content:space-between;align-items:center;
+            padding:10px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:99;
+        }
+        .logo-kiri, .logo-kanan {display:flex;gap:18px;}
+        .logo-header img {height:55px;object-fit:contain;}
 
         /* GELEMBUNG HIASAN */
-        .gelembung {position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);animation:naik 8s infinite ease-in-out;z-index:0;}
+        .gelembung {
+            position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);
+            animation:naik 8s infinite ease-in-out;z-index:0;
+        }
         @keyframes naik {
             0% {transform:translateY(100vh);opacity:0.5;}
             100% {transform:translateY(-50px);opacity:0;}
         }
 
-        /* MENU */
-        #menu {padding-top:10px;position:relative;z-index:10;}
-        h1 {color:#C71585;text-shadow:2px 2px 4px rgba(199,21,133,0.3);margin-bottom:20px;font-size:42px;}
-        .btn {padding:12px 35px;margin:8px;font-size:18px;border:none;border-radius:20px;color:white;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.1);}
-        .mudah {background:#FF69B4;}
-        .sedang {background:#FF1493;}
-        .sulit {background:#C71585;}
+        /* HALAMAN MENU */
+        #menu {padding-top:15px;position:relative;z-index:10;}
+        h1 {
+            color:#C71585;text-shadow:2px 2px 4px rgba(199,21,133,0.3);
+            margin-bottom:25px;font-size:42px;display:flex;align-items:center;justify-content:center;gap:10px;
+        }
+        .btn-group {display:flex;justify-content:center;gap:15px;margin-bottom:20px;flex-wrap:wrap;}
+        .btn {
+            padding:12px 35px;font-size:18px;border:none;border-radius:20px;
+            color:white;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.2);transition:0.2s;
+        }
+        .mudah {background:#F48FB1;}
+        .sedang {background:#FF4081;}
+        .sulit {background:#C2185B;}
         .btn:hover {transform:scale(1.05);}
 
-        .info-permainan {margin-top:15px;padding:12px;background:rgba(255,255,255,0.75);border-radius:15px;display:inline-block;}
-        .judul-aturan {color:#C71585;font-weight:bold;font-size:17px;margin-bottom:5px;}
-        .isi-aturan {color:#333;font-size:15px;line-height:1.5;}
+        .info-aturan {
+            display:inline-block;padding:12px 20px;background:rgba(255,255,255,0.75);
+            border-radius:15px;margin-bottom:20px;color:#880E4F;font-weight:500;
+        }
+        .petunjuk {color:#AD1457;font-size:15px;}
 
-        #info {display:none;background:rgba(199,21,133,0.8);color:white;padding:8px;font-size:18px;border-radius:8px;margin:5px;}
+        /* BAR INFO SAAT MAIN */
+        #info {
+            display:none;background:rgba(199,21,133,0.8);color:white;
+            padding:10px;font-size:18px;border-radius:8px;margin:10px auto;width:fit-content;position:relative;z-index:20;
+        }
         #info span {color:#FFE4E1;font-weight:bold;}
 
-        /* LAYAR MAIN */
-        #layar {display:none;width:900px;height:500px;background:linear-gradient(#FFE4E1,#FFC0CB);margin:20px auto;position:relative;overflow:hidden;border:3px solid #FF69B4;border-radius:12px;box-shadow:0 0 15px rgba(255,105,180,0.3);}
-        .logo-layar {position:absolute;top:10px;left:10px;display:flex;gap:8px;z-index:5;}
-        .logo-layar img {height:35px;opacity:0.85;}
-        #keranjang {position:absolute;bottom:10px;left:400px;font-size:90px;}
-        .jatuh {position:absolute;font-size:40px;}
-        #pesan {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(199,21,133,0.9);color:#FFE4E1;padding:25px;font-size:24px;display:none;border-radius:12px;border:2px solid #FF69B4;}
+        /* LAYAR PERMAINAN */
+        #layar {
+            display:none;width:900px;height:500px;
+            background:linear-gradient(#FFE4E1,#FFC0CB);
+            margin:15px auto;position:relative;overflow:hidden;
+            border:3px solid #FF69B4;border-radius:12px;
+            box-shadow:0 0 15px rgba(255,105,180,0.4);
+        }
+
+        /* ✅ LOGO BACKGROUND SAMAR PALING BELAKANG - PASTI TERLIHAT SAMAR SAJA */
+        .logo-bg {
+            position:absolute;top:0;left:0;width:100%;height:100%;
+            display:flex;justify-content:center;align-items:center;gap:25px;flex-wrap:wrap;
+            opacity:0.18; /* KEKUATAN SAMARNYA - TIDAK TERLALU GELAP TAPI ADA */
+            z-index:1; /* PALING BAWAH DI BAWAH BARANG JATUH & KERANJANG */
+            pointer-events:none;
+        }
+        .logo-bg img {height:100px;object-fit:contain;filter:grayscale(15%);}
+
+        #keranjang {position:absolute;bottom:10px;left:400px;font-size:90px;z-index:5;}
+        .jatuh {position:absolute;font-size:40px;z-index:4;}
+        #pesan {
+            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            background:rgba(199,21,133,0.92);color:#FFE4E1;padding:25px;font-size:24px;
+            display:none;border-radius:12px;border:2px solid #FF69B4;z-index:10;
+        }
     </style>
 </head>
 <body>
 
-<!-- LOGO DI ATAS MENU -->
-<div class="logo-bar">
-    <img src="onesanden.jpeg" alt="One Sanden">
-    <img src="moko.jpeg" alt="MOKO">
-    <img src="rpl.jpeg" alt="RPL">
-    <img src="smkn1sanden.jpeg" alt="SMKN 1 Sanden">
+<!-- LOGO DI MENU: 2 KIRI - 2 KANAN -->
+<div class="logo-header">
+    <div class="logo-kiri">
+        <img src="onesanden.jpeg" alt="One Sanden">
+        <img src="moko.jpeg" alt="MOKO">
+    </div>
+    <div class="logo-kanan">
+        <img src="rpl.jpeg" alt="RPL">
+        <img src="smkn1sanden.jpeg" alt="SMKN 1 Sanden">
+    </div>
 </div>
 
-<!-- GELEMBUNG -->
+<!-- GELEMBUNG HIASAN -->
 <script>
 for(let i=0;i<20;i++){
     let g = document.createElement('div');
     g.className='gelembung';
-    g.style.width = g.style.height = (10+Math.random()*30)+'px';
+    g.style.width = g.style.height = (12+Math.random()*25)+'px';
     g.style.left = (Math.random()*100)+'%';
     g.style.animationDelay = (Math.random()*8)+'s';
     document.body.appendChild(g);
 }
 </script>
 
+<!-- HALAMAN MENU -->
 <div id="menu">
     <h1>🧺 TANGKAP MAKANAN</h1>
-    <button class="btn mudah" onclick="mulai(3,1200)">🟢 MUDAH</button>
-    <button class="btn sedang" onclick="mulai(5,900)">🟠 SEDANG</button>
-    <button class="btn sulit" onclick="mulai(7,600)">🔴 SULIT</button>
-
-    <div class="info-permainan">
-        <p class="judul-aturan">❌ YANG TIDAK BOLEH DITANGKAP:</p>
-        <p class="isi-aturan">👟 Sepatu 🧦 Kaos Kaki 📱 HP Rusak 💣 Bom 🪨 Batu</p>
+    <div class="btn-group">
+        <button class="btn mudah" onclick="mulai(3,1200)">🟢 MUDAH</button>
+        <button class="btn sedang" onclick="mulai(5,900)">🟠 SEDANG</button>
+        <button class="btn sulit" onclick="mulai(7,600)">🔴 SULIT</button>
     </div>
-    <p style="margin-top:15px;color:#C71585;">Gunakan ⬅️➡️ untuk gerakkan keranjang</p>
+    <div class="info-aturan">
+        ❌ YANG TIDAK BOLEH DITANGKAP: 👟 Sepatu &nbsp; 🧦 Kaos Kaki &nbsp; 📱 HP Rusak &nbsp; 💣 Bom &nbsp; 🪨 Batu
+    </div>
+    <p class="petunjuk">Gunakan ⬅️ ➡️ untuk gerakkan keranjang</p>
 </div>
 
 <div id="info">
-    Nyawa: <span id="nyawa">❤️❤️❤️❤️❤️</span> |
-    Skor: <span id="skor">0</span> |
-    Level: <span id="level">1</span> / 10
+    Nyawa: <span id="nyawa">❤️❤️❤️❤️❤️</span> &nbsp;|&nbsp;
+    Skor: <span id="skor">0</span> &nbsp;|&nbsp;
+    Level: <span id="level">1 / 10</span>
 </div>
 
 <div id="layar">
-    <!-- LOGO SAAT MAIN -->
-    <div class="logo-layar">
+    <!-- ✅ LOGO BACKGROUND SAMAR DI SINI -->
+    <div class="logo-bg">
         <img src="onesanden.jpeg" alt="">
         <img src="moko.jpeg" alt="">
         <img src="rpl.jpeg" alt="">
@@ -117,8 +161,8 @@ const suaraSalah = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-retro-
 const suaraNaik = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
 suaraBenar.volume = 0.7; suaraSalah.volume = 0.7; suaraNaik.volume = 0.7;
 
-document.addEventListener('keydown',e=>tombol[e.key]=true);
-document.addEventListener('keyup',e=>tombol[e.key]=false);
+document.addEventListener('keydown', e=>tombol[e.key]=true);
+document.addEventListener('keyup', e=>tombol[e.key]=false);
 
 function mulai(k,j){
     menu.style.display='none'; info.style.display='block'; layar.style.display='block';
@@ -127,10 +171,10 @@ function mulai(k,j){
 }
 
 function updateInfo(){
-    elSkor.innerText = skor; elLevel.innerText = level; elNyawa.innerText = '❤️'.repeat(nyawa);
+    elSkor.innerText = skor; elLevel.innerText = level+' / 10'; elNyawa.innerText = '❤️'.repeat(nyawa);
 }
 
-function tampil(t){pesan.innerText=t;pesan.style.display='block';setTimeout(()=>location.reload(),3500)}
+function tampil(tulisan){pesan.innerText = tulisan; pesan.style.display='block'; setTimeout(()=>location.reload(),3500);}
 
 function naikLevel(){
     level++;
@@ -149,28 +193,28 @@ function buatBarang(){
 function gerakBarang(el){
     const gerak=setInterval(()=>{
         if(!jalan){clearInterval(gerak);return;}
-        let y=parseFloat(el.style.top);y+=kecepatan;el.style.top=y+'px';
+        let y=parseFloat(el.style.top); y+=kecepatan; el.style.top=y+'px';
         let kiri=arah - 40; let kanan=arah + 130;
 
         if(y>=440&&y<=490){
             let x=parseFloat(el.style.left);
             if(x>kiri&&x<kanan){
-                el.remove();clearInterval(gerak);
+                el.remove(); clearInterval(gerak);
                 if(el.dataset.jenis=='bagus'){skor+=10;suaraBenar.play();if(skor%50==0)naikLevel();}
-                else{nyawa--;suaraSalah.play();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor: ${skor}`);}}
+                else{nyawa--;suaraSalah.play();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
                 updateInfo();
             }
         }
         if(y>520){
-            el.remove();clearInterval(gerak);
-            if(el.dataset.jenis=='bagus'){nyawa--;suaraSalah.play();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor: ${skor}`);}}
+            el.remove(); clearInterval(gerak);
+            if(el.dataset.jenis=='bagus'){nyawa--;suaraSalah.play();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
             updateInfo();
         }
     },30);
 }
 
 function main(){
-    if(!jalan)return;
+    if(!jalan) return;
     if(tombol['ArrowLeft']&&arah>10)arah-=8;
     if(tombol['ArrowRight']&&arah<800)arah+=8;
     keranjang.style.left=arah+'px';
