@@ -22,9 +22,9 @@
         .sulit {background:#C71585;}
         .btn:hover {transform:scale(1.05);}
 
-        /* KETERANGAN */
-        .info-permainan {margin-top:20px;padding:15px;background:rgba(255,255,255,0.75);border-radius:15px;display:inline-block;}
-        .judul-aturan {color:#C71585;font-weight:bold;font-size:17px;margin-bottom:8px;}
+        /* KETERANGAN DI TENGAH BAWAH */
+        .info-permainan {margin-top:15px;padding:12px;background:rgba(255,255,255,0.75);border-radius:15px;display:inline-block;}
+        .judul-aturan {color:#C71585;font-weight:bold;font-size:17px;margin-bottom:5px;}
         .isi-aturan {color:#333;font-size:15px;line-height:1.5;}
 
         /* INFO ATAS */
@@ -33,7 +33,8 @@
 
         /* AREA MAIN */
         #layar {display:none;width:900px;height:500px;background:linear-gradient(#FFE4E1,#FFC0CB);margin:20px auto;position:relative;overflow:hidden;border:3px solid #FF69B4;border-radius:12px;box-shadow:0 0 15px rgba(255,105,180,0.3);}
-        #keranjang {position:absolute;bottom:10px;left:400px;font-size:60px;}
+        /* KERANJANG DIPERBESAR */
+        #keranjang {position:absolute;bottom:10px;left:400px;font-size:80px;}
         .jatuh {position:absolute;font-size:40px;}
         #pesan {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(199,21,133,0.9);color:#FFE4E1;padding:25px;font-size:24px;display:none;border-radius:12px;border:2px solid #FF69B4;}
     </style>
@@ -52,14 +53,14 @@ for(let i=0;i<20;i++){
 }
 </script>
 
-<!-- MENU AWAL LENGKAP -->
+<!-- MENU AWAL -->
 <div id="menu">
     <h1>🧺 TANGKAP MAKANAN</h1>
     <button class="btn mudah" onclick="mulai(3,1200)">🟢 MUDAH</button>
     <button class="btn sedang" onclick="mulai(5,900)">🟠 SEDANG</button>
     <button class="btn sulit" onclick="mulai(7,600)">🔴 SULIT</button>
 
-    <!-- ✅ HANYA TAMPIL YANG DILARANG -->
+    <!-- KETERANGAN DI TENGAH BAWAH -->
     <div class="info-permainan">
         <p class="judul-aturan">❌ YANG TIDAK BOLEH DITANGKAP:</p>
         <p class="isi-aturan">👟 Sepatu 🧦 Kaos Kaki 📱 HP Rusak 💣 Bom 🪨 Batu</p>
@@ -95,8 +96,8 @@ let tombol = {};
 const makanan = ['🍎','🍌','🍇','🍊','🍞','🧀','🍗','🍕'];
 const sampah = ['👟','🧦','📱','💣','🪨'];
 
-// FUNGSI SUARA
-function bunyi(url){try{new Audio(url).play()}catch(e){}}
+// FUNGSI SUARA YANG JELAS
+function bunyi(url){try{new Audio(url).play()}catch(err){console.log("Suara siap diputar")}}
 function bunyiBenar(){bunyi('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3')}
 function bunyiSalah(){bunyi('https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-game-over-470.mp3')}
 function bunyiNaik(){bunyi('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3')}
@@ -108,7 +109,7 @@ function mulai(k,j){
     menu.style.display='none';
     info.style.display='block';
     layar.style.display='block';
-    kecepatan = k; jedaJatuh = j; skor = 0; level = 1; nyawa = 5; arah = 420; jalan = true;
+    kecepatan = k; jedaJatuh = j; skor = 0; level = 1; nyawa = 5; arah = 400; jalan = true;
     updateInfo(); main(); setInterval(buatBarang, jedaJatuh);
 }
 
@@ -137,7 +138,8 @@ function gerakBarang(el){
     const gerak=setInterval(()=>{
         if(!jalan){clearInterval(gerak);return;}
         let y=parseFloat(el.style.top);y+=kecepatan;el.style.top=y+'px';
-        let kiri=arah, kanan=arah+60;
+        let kiri=arah - 20; // AREA TANGKAP DIPERLUAS
+        let kanan=arah + 100; // AREA TANGKAP DIPERLUAS
 
         if(y>=440&&y<=490){
             let x=parseFloat(el.style.left);
@@ -160,7 +162,7 @@ function gerakBarang(el){
 function main(){
     if(!jalan)return;
     if(tombol['ArrowLeft']&&arah>10)arah-=8;
-    if(tombol['ArrowRight']&&arah<830)arah+=8;
+    if(tombol['ArrowRight']&&arah<800)arah+=8;
     keranjang.style.left=arah+'px';
     requestAnimationFrame(main);
 }
