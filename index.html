@@ -14,13 +14,18 @@
         }
 
         /* MENU PILIH */
-        #menu {padding-top:100px;position:relative;z-index:10;}
-        h1 {color:#C71585;text-shadow:2px 2px 4px rgba(199,21,133,0.3);margin-bottom:30px;}
+        #menu {padding-top:80px;position:relative;z-index:10;}
+        h1 {color:#C71585;text-shadow:2px 2px 4px rgba(199,21,133,0.3);margin-bottom:25px;font-size:42px;}
         .btn {padding:12px 35px;margin:10px;font-size:18px;border:none;border-radius:20px;color:white;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.1);}
         .mudah {background:#FF69B4;}
         .sedang {background:#FF1493;}
         .sulit {background:#C71585;}
         .btn:hover {transform:scale(1.05);}
+
+        /* KETERANGAN */
+        .info-permainan {margin-top:20px;padding:15px;background:rgba(255,255,255,0.75);border-radius:15px;display:inline-block;}
+        .judul-aturan {color:#C71585;font-weight:bold;font-size:17px;margin-bottom:8px;}
+        .isi-aturan {color:#333;font-size:15px;line-height:1.5;}
 
         /* INFO ATAS */
         #info {display:none;background:rgba(199,21,133,0.8);color:white;padding:8px;font-size:18px;border-radius:8px;margin:5px;}
@@ -47,12 +52,19 @@ for(let i=0;i<20;i++){
 }
 </script>
 
-<!-- MENU AWAL -->
+<!-- MENU AWAL LENGKAP -->
 <div id="menu">
     <h1>🧺 TANGKAP MAKANAN</h1>
     <button class="btn mudah" onclick="mulai(3,1200)">🟢 MUDAH</button>
     <button class="btn sedang" onclick="mulai(5,900)">🟠 SEDANG</button>
     <button class="btn sulit" onclick="mulai(7,600)">🔴 SULIT</button>
+
+    <!-- ✅ HANYA TAMPIL YANG DILARANG -->
+    <div class="info-permainan">
+        <p class="judul-aturan">❌ YANG TIDAK BOLEH DITANGKAP:</p>
+        <p class="isi-aturan">👟 Sepatu 🧦 Kaos Kaki 📱 HP Rusak 💣 Bom 🪨 Batu</p>
+    </div>
+
     <p style="margin-top:15px;color:#C71585;">Gunakan ⬅️➡️ untuk gerakkan keranjang</p>
 </div>
 
