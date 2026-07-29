@@ -32,7 +32,7 @@
         }
         .btn-group {display:flex;justify-content:center;gap:15px;margin-bottom:20px;flex-wrap:wrap;}
         .btn {
-            padding:12px 35px;font-size:18px;border:none;border-radius:20px;
+            padding:12px 35px;font-size:18px;border:none;border-radius:25px;
             color:white;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.2);transition:0.2s;
         }
         .mudah {background:#F48FB1;}
@@ -42,33 +42,38 @@
 
         .info-aturan {
             display:inline-block;padding:12px 20px;background:rgba(255,255,255,0.75);
-            border-radius:15px;margin-bottom:20px;color:#880E4F;font-weight:500;
+            border-radius:20px;margin-bottom:20px;color:#880E4F;font-weight:500;
         }
         .petunjuk {color:#AD1457;font-size:15px;}
 
-        /* BAR INFO SAAT MAIN */
+        /* BAR INFO & NYAWA BENTUK MELENGKUNG BUKAN KOTAK */
         #info {
             display:none;background:rgba(199,21,133,0.8);color:white;
-            padding:10px;font-size:18px;border-radius:8px;margin:10px auto;width:fit-content;position:relative;z-index:20;
+            padding:10px 20px;font-size:18px;border-radius:50px; /* BENTUK MELENGKUNG PENUH */
+            margin:10px auto;width:fit-content;position:relative;z-index:20;
+            box-shadow:0 2px 8px rgba(0,0,0,0.15);
         }
-        #info span {color:#FFE4E1;font-weight:bold;}
+        .nyawa-container {display:inline-flex;gap:6px;margin:0 8px;}
+        .hati {
+            font-size:20px;line-height:1;
+            padding:4px 6px;border-radius:50%; /* BENTUK BULAT LEMBUT */
+            background:rgba(255,255,255,0.2);
+        }
 
         /* LAYAR PERMAINAN */
         #layar {
             display:none;width:900px;height:500px;
             background:linear-gradient(#FFE4E1,#FFC0CB);
             margin:15px auto;position:relative;overflow:hidden;
-            border:3px solid #FF69B4;border-radius:12px;
+            border:3px solid #FF69B4;border-radius:20px;
             box-shadow:0 0 15px rgba(255,105,180,0.4);
         }
 
-        /* ✅ LOGO BACKGROUND SAMAR PALING BELAKANG - PASTI TERLIHAT SAMAR SAJA */
+        /* LOGO BACKGROUND SAMAR PALING BELAKANG */
         .logo-bg {
             position:absolute;top:0;left:0;width:100%;height:100%;
             display:flex;justify-content:center;align-items:center;gap:25px;flex-wrap:wrap;
-            opacity:0.18; /* KEKUATAN SAMARNYA - TIDAK TERLALU GELAP TAPI ADA */
-            z-index:1; /* PALING BAWAH DI BAWAH BARANG JATUH & KERANJANG */
-            pointer-events:none;
+            opacity:0.18;z-index:1;pointer-events:none;
         }
         .logo-bg img {height:100px;object-fit:contain;filter:grayscale(15%);}
 
@@ -77,7 +82,7 @@
         #pesan {
             position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
             background:rgba(199,21,133,0.92);color:#FFE4E1;padding:25px;font-size:24px;
-            display:none;border-radius:12px;border:2px solid #FF69B4;z-index:10;
+            display:none;border-radius:20px;border:2px solid #FF69B4;z-index:10;
         }
     </style>
 </head>
@@ -122,13 +127,11 @@ for(let i=0;i<20;i++){
 </div>
 
 <div id="info">
-    Nyawa: <span id="nyawa">❤️❤️❤️❤️❤️</span> &nbsp;|&nbsp;
-    Skor: <span id="skor">0</span> &nbsp;|&nbsp;
-    Level: <span id="level">1 / 10</span>
+    Nyawa: <span class="nyawa-container" id="tampilNyawa"></span>
+    &nbsp;|&nbsp; Skor: <span id="skor">0</span> &nbsp;|&nbsp; Level: <span id="level">1 / 10</span>
 </div>
 
 <div id="layar">
-    <!-- ✅ LOGO BACKGROUND SAMAR DI SINI -->
     <div class="logo-bg">
         <img src="onesanden.jpeg" alt="">
         <img src="moko.jpeg" alt="">
@@ -145,9 +148,10 @@ const info = document.getElementById('info');
 const layar = document.getElementById('layar');
 const keranjang = document.getElementById('keranjang');
 const pesan = document.getElementById('pesan');
-const elNyawa = document.getElementById('nyawa');
+const tampilNyawa = document.getElementById('tampilNyawa');
 const elSkor = document.getElementById('skor');
 const elLevel = document.getElementById('level');
+const logoHeader = document.querySelector('.logo-header');
 
 let jalan, kecepatan, jedaJatuh, skor, level, nyawa, arah;
 let tombol = {};
@@ -155,7 +159,6 @@ let tombol = {};
 const makanan = ['🍎','🍌','🍇','🍊','🍞','🧀','🍗','🍕'];
 const sampah = ['👟','🧦','📱','💣','🪨'];
 
-// SUARA
 const suaraBenar = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
 const suaraSalah = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-game-over-470.mp3');
 const suaraNaik = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
@@ -164,14 +167,27 @@ suaraBenar.volume = 0.7; suaraSalah.volume = 0.7; suaraNaik.volume = 0.7;
 document.addEventListener('keydown', e=>tombol[e.key]=true);
 document.addEventListener('keyup', e=>tombol[e.key]=false);
 
+function updateNyawa(){
+    tampilNyawa.innerHTML = '';
+    for(let i=0;i<5;i++){
+        const h = document.createElement('span');
+        h.className = 'hati';
+        h.innerText = i < nyawa ? '❤️' : '🖤';
+        tampilNyawa.appendChild(h);
+    }
+}
+
 function mulai(k,j){
-    menu.style.display='none'; info.style.display='block'; layar.style.display='block';
+    menu.style.display='none'; 
+    info.style.display='block'; 
+    layar.style.display='block';
+    logoHeader.style.display='none'; // HILANG LOGO ATAS PAS MAIN
     kecepatan = k; jedaJatuh = j; skor = 0; level = 1; nyawa = 5; arah = 400; jalan = true;
-    updateInfo(); main(); setInterval(buatBarang, jedaJatuh);
+    updateInfo(); updateNyawa(); main(); setInterval(buatBarang, jedaJatuh);
 }
 
 function updateInfo(){
-    elSkor.innerText = skor; elLevel.innerText = level+' / 10'; elNyawa.innerText = '❤️'.repeat(nyawa);
+    elSkor.innerText = skor; elLevel.innerText = level+' / 10';
 }
 
 function tampil(tulisan){pesan.innerText = tulisan; pesan.style.display='block'; setTimeout(()=>location.reload(),3500);}
@@ -201,13 +217,13 @@ function gerakBarang(el){
             if(x>kiri&&x<kanan){
                 el.remove(); clearInterval(gerak);
                 if(el.dataset.jenis=='bagus'){skor+=10;suaraBenar.play();if(skor%50==0)naikLevel();}
-                else{nyawa--;suaraSalah.play();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
+                else{nyawa--;suaraSalah.play();updateNyawa();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
                 updateInfo();
             }
         }
         if(y>520){
             el.remove(); clearInterval(gerak);
-            if(el.dataset.jenis=='bagus'){nyawa--;suaraSalah.play();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
+            if(el.dataset.jenis=='bagus'){nyawa--;suaraSalah.play();updateNyawa();if(nyawa<=0){jalan=false;tampil(`💀 GAME OVER! Skor Akhir: ${skor}`);}}
             updateInfo();
         }
     },30);
